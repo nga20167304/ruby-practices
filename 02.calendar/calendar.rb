@@ -8,12 +8,16 @@ year = params["y"].to_i
 def check_month(month)
   if month == 0
     return Date.today.month
+  else
+    return month
   end
 end
 
 def check_year(year)
   if year == 0
     return Date.today.year
+  else
+    return year
   end
 end
 
