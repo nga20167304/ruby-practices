@@ -1,9 +1,24 @@
 require 'optparse'
 require 'date'
-params = ARGV.getopts("m:","y:")
 
-month = params["m"].to_i
-year = params["y"].to_i
+def main
+  params = ARGV.getopts("m:","y:")
+
+  month = params["m"].to_i
+  year = params["y"].to_i
+  
+  month = check_month(month)
+  year = check_year(year)
+
+  number_of_days = Date.new(year, month, -1).day
+
+  start_day = Date.new(year, month, 1)
+  x = start_day.wday
+
+  string = month.to_s + "月" + " "+ year.to_s + "年"
+  puts string.center(20, " ")
+  puts format_calendar(x, number_of_days)
+end
 
 def check_month(month)
   month == 0 ? Date.today.month : month
@@ -22,18 +37,4 @@ def format_calendar(offset, month_length)
   lines.join("\n")
 end
 
-def main(month, year)
-  month = check_month(month)
-  year = check_year(year)
-
-  number_of_days = Date.new(year, month, -1).day
-
-  start_day = Date.new(year, month, 1)
-  x = start_day.wday
-
-  string = month.to_s + "月" + " "+ year.to_s + "年"
-  puts string.center(20, " ")
-  puts format_calendar(x, number_of_days)
-end
-
-main(month, year)
+main
