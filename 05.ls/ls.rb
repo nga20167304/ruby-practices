@@ -2,12 +2,17 @@
 
 COLUMN = 3
 DISTANCE = 20
+BALANCE_LINE = 1
 
 path = File.absolute_path('..')
 
 files = Dir.entries(path).filter { |f| !f.start_with? '.' }
 
-line = files.size / COLUMN + 1
+line = if (files.size % COLUM).zero?
+         files.size / COLUMN
+       else
+         files.size / COLUMN + BALANCE_LINE
+       end
 
 def format_ls(files, line)
   lines = []
