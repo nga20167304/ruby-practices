@@ -1,29 +1,23 @@
-require 'optparse'
+# frozen_string_literal: true
 
-path = File.absolute_path("..")
+COLUMN = 3
+DISTANCE = 20
 
-opt = OptionParser.new
-opt.on('ls')
-opt.parse(ARGV)
+path = File.absolute_path('..')
 
-files = Dir.entries(path).filter {|f| !f.start_with? '.'}
+files = Dir.entries(path).filter { |f| !f.start_with? '.' }
 
-line = files.size / 3 + 1
+line = files.size / COLUMN + 1
 
 def format_ls(files, line)
   lines = []
   files.each_slice(line) do |x|
     lines << x
   end
+
   (0..lines.size).each do |i|
-    puts lines[0][i].to_s.ljust(20) + lines[1][i].to_s.ljust(20) + lines[2][i].to_s
+    puts lines[0][i].to_s.ljust(DISTANCE) + lines[1][i].to_s.ljust(DISTANCE) + lines[2][i].to_s
   end
 end
 
-def check_ls(argv, files, line)
-  if argv == 'ls'
-    format_ls(files, line)
-  end
-end
-
-check_ls(ARGV[0], files.sort, line)
+format_ls(files.sort, line)
