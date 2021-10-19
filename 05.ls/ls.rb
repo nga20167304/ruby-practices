@@ -4,7 +4,7 @@ COLUMN = 3
 DISTANCE = 20
 BALANCE_LINE = 1
 
-path = File.absolute_path('..')
+path = Dir.getwd
 
 files = Dir.entries(path).filter { |f| !f.start_with? '.' }
 
