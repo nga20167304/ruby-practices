@@ -1,47 +1,71 @@
 # frozen_string_literal: true
 
-COLUMN = 3
-DISTANCE = 20
-BALANCE_LINE = 1
+COLUMN_NUM = 3
+BLANK_NUM = 10
 
-path = Dir.getwd
+def extract_elements
+  path = Dir.getwd
+  Dir.entries(path).filter { |f| !f.start_with? '.' }
+end
 
-files = Dir.entries(path).filter { |f| !f.start_with? '.' }
+def format(col_num, arr)
+  slice_arr = handle_split_col(col_num, arr)
+  p slice_arr
 
-line = if (files.size % COLUMN).zero?
-         files.size / COLUMN
-       else
-         files.size / COLUMN + BALANCE_LINE
-       end
-
-def format_ls(files, line)
-  lines = slice_array(files, line)
-
-  (0..lines.size).each do |i|
-    puts lines[0][i].to_s.ljust(DISTANCE) + lines[1][i].to_s.ljust(DISTANCE) + lines[2][i].to_s unless lines[0][i].nil? && lines[1][i].nil? && lines[2][i].nil?
+  (0...num_of_row_max(col_num, arr)).each do |i|
+    tmp = ''
+    (0...slice_arr.length).each do |j|
+      tmp += slice_arr[j][i].to_s.ljust(string_length_max(arr) + BLANK_NUM)
+    end
+    puts tmp
   end
 end
 
-def slice_array(files, line)
-  left_lines = []
-  center_lines = []
-  right_lines = []
+def handle_split_col(col_num, arr)
+  return [] if col_num.zero?
 
-  files.each_with_index do |_file, index|
-    case index / line
-    when 0
-      left_lines << files[index]
-    when 1
-      center_lines << files[index]
+  number_of_col_more = arr.length % col_num
+  min_num_of_row = (arr.length - number_of_col_more) / col_num
+
+  array_result = []
+  current_pointer_of_arr = 0
+
+  (0...col_num).each do |i|
+    break if arr.length <= i
+
+    if i < number_of_col_more
+      array_result[i] = arr.slice(current_pointer_of_arr, min_num_of_row + 1)
+      current_pointer_of_arr = current_pointer_of_arr + min_num_of_row + 1
     else
-      right_lines << files[index]
+      array_result[i] = arr.slice(current_pointer_of_arr, min_num_of_row)
+      current_pointer_of_arr += min_num_of_row
     end
   end
 
-  lines = []
-  lines.push(left_lines)
-  lines.push(center_lines)
-  lines.push(right_lines)
+  array_result
 end
 
-format_ls(files.sort, line)
+def num_of_row_max(col_num, arr)
+  return 0 if arr == []
+
+  number_of_col_more = arr.length % col_num
+  min_num_of_row = (arr.length - number_of_col_more) / col_num
+
+  number_of_col_more.zero? ? min_num_of_row : min_num_of_row + 1
+end
+
+def string_length_max(arr)
+  string_length_max = 0
+
+  arr.each do |n|
+    string_length_max = n.length if string_length_max <= n.length
+  end
+  string_length_max
+end
+
+def main
+  elements = extract_elements.sort
+  format(COLUMN_NUM, elements)
+end
+
+main
