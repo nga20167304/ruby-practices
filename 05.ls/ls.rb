@@ -23,8 +23,8 @@ end
 def handle_split_col(col_num, arr)
   return [] if col_num.zero?
 
-  number_of_col_more = arr.length % col_num
-  min_num_of_row = (arr.length - number_of_col_more) / col_num
+  min_num_of_row = (arr.length - (arr.length % col_num)) / col_num
+  min_num_of_row = 1 if min_num_of_row.zero?
 
   array_result = []
   current_pointer_of_arr = 0
@@ -32,7 +32,9 @@ def handle_split_col(col_num, arr)
   (0...col_num).each do |i|
     break if arr.length <= i
 
-    if i <= number_of_col_more
+    number_of_col_more = (arr.length % col_num).zero? ? 0 : arr.length - 1
+
+    if i < number_of_col_more
       array_result[i] = arr.slice(current_pointer_of_arr, min_num_of_row + 1)
       current_pointer_of_arr = current_pointer_of_arr + min_num_of_row + 1
     else
