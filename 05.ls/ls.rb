@@ -10,7 +10,6 @@ end
 
 def format(col_num, arr)
   slice_arr = handle_split_col(col_num, arr)
-  p slice_arr
 
   (0...num_of_row_max(col_num, arr)).each do |i|
     tmp = ''
@@ -33,7 +32,7 @@ def handle_split_col(col_num, arr)
   (0...col_num).each do |i|
     break if arr.length <= i
 
-    if i < number_of_col_more
+    if i <= number_of_col_more
       array_result[i] = arr.slice(current_pointer_of_arr, min_num_of_row + 1)
       current_pointer_of_arr = current_pointer_of_arr + min_num_of_row + 1
     else
