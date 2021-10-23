@@ -61,9 +61,9 @@ def string_length_max(arr)
   string_max.length
 end
 
-def main(col_num)
+def main(display_num_of_col)
   elements = extract_elements.sort
-  format(col_num, elements)
+  format(display_num_of_col, elements)
 end
 
 main(COLUMN_NUM)
