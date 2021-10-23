@@ -8,13 +8,14 @@ def extract_elements
   Dir.entries(path).filter { |f| !f.start_with? '.' }
 end
 
-def format(col_num, arr)
-  slice_arr = handle_split_col(col_num, arr)
+def format(display_num_of_col, display_arr)
+  slice_arr = handle_split_col(display_num_of_col, display_arr)
+  length_string_max = string_length_max(display_arr)
 
-  (0...num_of_row_max(col_num, arr)).each do |i|
+  (0...num_of_row_max(display_num_of_col, display_arr)).each do |i|
     tmp = ''
     (0...slice_arr.length).each do |j|
-      tmp += slice_arr[j][i].to_s.ljust(string_length_max(arr) + BLANK_NUM)
+      tmp += slice_arr[j][i].to_s.ljust(length_string_max + BLANK_NUM)
     end
     puts tmp
   end
@@ -56,17 +57,13 @@ def num_of_row_max(col_num, arr)
 end
 
 def string_length_max(arr)
-  string_length_max = 0
-
-  arr.each do |n|
-    string_length_max = n.length if string_length_max <= n.length
-  end
-  string_length_max
+  string_max = arr.max_by { |x| x.length }
+  string_max.length
 end
 
-def main
+def main(col_num)
   elements = extract_elements.sort
-  format(COLUMN_NUM, elements)
+  format(col_num, elements)
 end
 
-main
+main(COLUMN_NUM)
