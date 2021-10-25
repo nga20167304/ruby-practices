@@ -1,6 +1,4 @@
 # frozen_string_literal: true
-
-COLUMN_NUM = 3
 BLANK_NUM = 10
 
 def extract_elements
@@ -11,8 +9,9 @@ end
 def format(display_num_of_col, display_arr)
   slice_arr = handle_split_col(display_num_of_col, display_arr)
   length_string_max = string_length_max(display_arr)
+  arr_has_max_elements = slice_arr.max_by{|arr| arr.size}
 
-  (0...num_of_row_max(display_num_of_col, display_arr)).each do |i|
+  (0...arr_has_max_elements.length).each do |i|
     tmp = ''
     (0...slice_arr.length).each do |j|
       tmp += slice_arr[j][i].to_s.ljust(length_string_max + BLANK_NUM)
@@ -22,27 +21,11 @@ def format(display_num_of_col, display_arr)
 end
 
 def handle_split_col(col_num, arr)
-  return [] if col_num.zero?
-
-  min_num_of_row = (arr.length - (arr.length % col_num)) / col_num
-  min_num_of_row = 1 if min_num_of_row.zero?
-
   array_result = []
-  current_pointer_of_arr = 0
 
-  (0...col_num).each do |i|
-    break if arr.length <= i
+  max_num_of_row = num_of_row_max(col_num, arr)
 
-    number_of_col_more = (arr.length % col_num).zero? ? 0 : arr.length - 1
-
-    if i < number_of_col_more
-      array_result[i] = arr.slice(current_pointer_of_arr, min_num_of_row + 1)
-      current_pointer_of_arr = current_pointer_of_arr + min_num_of_row + 1
-    else
-      array_result[i] = arr.slice(current_pointer_of_arr, min_num_of_row)
-      current_pointer_of_arr += min_num_of_row
-    end
-  end
+  arr.each_slice(max_num_of_row) {|a| array_result << a }
 
   array_result
 end
@@ -66,4 +49,4 @@ def main(display_num_of_col)
   format(display_num_of_col, elements)
 end
 
-main(COLUMN_NUM)
+main(3)
