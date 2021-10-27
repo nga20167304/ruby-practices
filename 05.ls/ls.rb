@@ -8,7 +8,7 @@ def extract_elements
   Dir.entries(path).filter { |f| !f.start_with? '.' }
 end
 
-def format(extracted_elements)
+def display(extracted_elements)
   columns = handle_split_columns(extracted_elements)
   max_num_of_character = max_num_of_character(extracted_elements)
   num_of_elements_of_longest_columns = columns.max_by(&:size)
@@ -48,7 +48,7 @@ end
 
 def main
   elements = extract_elements.sort
-  format(elements)
+  display(elements)
 end
 
 main
