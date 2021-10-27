@@ -8,8 +8,8 @@ def extract_elements
   Dir.entries(path).filter { |f| !f.start_with? '.' }
 end
 
-def format(display_num_of_col, display_arr)
-  slice_arr = handle_split_col(display_num_of_col, display_arr)
+def format(display_arr)
+  slice_arr = handle_split_col(display_arr)
   length_string_max = string_length_max(display_arr)
   arr_has_max_elements = slice_arr.max_by(&:size)
 
@@ -22,21 +22,21 @@ def format(display_num_of_col, display_arr)
   end
 end
 
-def handle_split_col(col_num, arr)
+def handle_split_col(arr)
   array_result = []
 
-  max_num_of_row = num_of_row_max(col_num, arr)
+  max_num_of_row = num_of_row_max(arr)
 
   arr.each_slice(max_num_of_row) { |a| array_result << a }
 
   array_result
 end
 
-def num_of_row_max(col_num, arr)
+def num_of_row_max(arr)
   return 0 if arr.empty?
 
-  number_of_col_more = arr.length % col_num
-  min_num_of_row = arr.length / col_num
+  number_of_col_more = arr.length % COLUMN_NUM
+  min_num_of_row = arr.length / COLUMN_NUM
 
   number_of_col_more.zero? ? min_num_of_row : min_num_of_row + 1
 end
@@ -48,7 +48,7 @@ end
 
 def main
   elements = extract_elements.sort
-  format(COLUMN_NUM, elements)
+  format(elements)
 end
 
 main
