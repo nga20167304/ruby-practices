@@ -9,27 +9,25 @@ def extract_elements
 end
 
 def display(extracted_elements)
-  columns = handle_split_columns(extracted_elements)
-  max_num_of_character = max_num_of_character(extracted_elements)
+  columns = handle_split_elements_into_column(extracted_elements)
+  max_length_of_element_name = max_length_of_element_name(extracted_elements)
   num_of_elements_of_longest_columns = columns.max_by(&:size)
 
   (0...num_of_elements_of_longest_columns.length).each do |i|
     tmp = ''
     (0...columns.length).each do |j|
-      tmp += columns[j][i].to_s.ljust(max_num_of_character + MARGIN)
+      tmp += columns[j][i].to_s.ljust(max_length_of_element_name + MARGIN)
     end
     puts tmp
   end
 end
 
-def handle_split_columns(arr)
-  array_result = []
-
+def handle_split_elements_into_column(arr)
+  array_after_splitted = []
   max_num_of_row = max_num_of_per_column(arr)
+  arr.each_slice(max_num_of_row) { |a| array_after_splitted << a }
 
-  arr.each_slice(max_num_of_row) { |a| array_result << a }
-
-  array_result
+  array_after_splitted
 end
 
 def max_num_of_per_column(arr)
@@ -41,9 +39,9 @@ def max_num_of_per_column(arr)
   num_of_remainder.zero? ? max_num_of_per_column : max_num_of_per_column + 1
 end
 
-def max_num_of_character(arr)
-  string_max = arr.max_by(&:length)
-  string_max.length
+def max_length_of_element_name(arr)
+  element_has_max_length = arr.max_by(&:length)
+  element_has_max_length.length
 end
 
 def main
