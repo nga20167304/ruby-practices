@@ -25,13 +25,13 @@ def display(extracted_elements)
 end
 
 def split_elements_into_column(columns)
-  array_after_splitted = []
+  elements_after_splitted = []
   max_num_of_row = max_num_of_per_column(columns)
   return array_after_splitted if columns.empty?
 
-  columns.each_slice(max_num_of_row) { |a| array_after_splitted << a }
+  columns.each_slice(max_num_of_row) { |a| elements_after_splitted << a }
 
-  array_after_splitted
+  elements_after_splitted
 end
 
 def max_num_of_per_column(elements)
