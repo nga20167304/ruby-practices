@@ -9,38 +9,44 @@ def extract_elements
 end
 
 def display(extracted_elements)
-  columns = handle_split_elements_into_column(extracted_elements)
-  max_length_of_element_name = max_length_of_element_name(extracted_elements)
-  num_of_elements_of_longest_columns = columns.max_by(&:size)
+  columns = split_elements_into_column(extracted_elements)
+  longest_element_name_length = longest_element_name_length(extracted_elements)
+  return if longest_element_name_length.zero?
 
-  (0...num_of_elements_of_longest_columns.length).each do |i|
+  largest_column_elements_count = columns.max_by(&:size)
+
+  (0...largest_column_elements_count.length).each do |i|
     tmp = ''
     (0...columns.length).each do |j|
-      tmp += columns[j][i].to_s.ljust(max_length_of_element_name + MARGIN)
+      tmp += columns[j][i].to_s.ljust(longest_element_name_length + MARGIN)
     end
     puts tmp
   end
 end
 
-def handle_split_elements_into_column(arr)
+def split_elements_into_column(columns)
   array_after_splitted = []
-  max_num_of_row = max_num_of_per_column(arr)
-  arr.each_slice(max_num_of_row) { |a| array_after_splitted << a }
+  max_num_of_row = max_num_of_per_column(columns)
+  return array_after_splitted if columns.empty?
+
+  columns.each_slice(max_num_of_row) { |a| array_after_splitted << a }
 
   array_after_splitted
 end
 
-def max_num_of_per_column(arr)
-  return 0 if arr.empty?
+def max_num_of_per_column(elements)
+  return 0 if elements.empty?
 
-  num_of_remainder = arr.length % COLUMN_NUM
-  max_num_of_per_column = arr.length / COLUMN_NUM
+  num_of_remainder = elements.length % COLUMN_NUM
+  max_num_of_per_column = elements.length / COLUMN_NUM
 
   num_of_remainder.zero? ? max_num_of_per_column : max_num_of_per_column + 1
 end
 
-def max_length_of_element_name(arr)
-  element_has_max_length = arr.max_by(&:length)
+def longest_element_name_length(elements)
+  element_has_max_length = elements.max_by(&:length)
+  return 0 if element_has_max_length.nil?
+
   element_has_max_length.length
 end
 
