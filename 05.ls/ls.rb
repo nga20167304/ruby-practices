@@ -27,7 +27,7 @@ end
 def split_elements_into_column(columns)
   elements_after_splitted = []
   max_num_of_row = max_num_of_per_column(columns)
-  return array_after_splitted if columns.empty?
+  return elements_after_splitted if columns.empty?
 
   columns.each_slice(max_num_of_row) { |a| elements_after_splitted << a }
 
