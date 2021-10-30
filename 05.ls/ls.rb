@@ -9,10 +9,10 @@ def extract_elements
 end
 
 def display(extracted_elements)
+  return if extracted_elements.empty?
+
   columns = split_elements_into_column(extracted_elements)
   longest_element_name_length = longest_element_name_length(extracted_elements)
-  return if longest_element_name_length.zero?
-
   largest_column_elements_count = columns.max_by(&:size)
 
   (0...largest_column_elements_count.length).each do |i|
@@ -35,8 +35,6 @@ def split_elements_into_column(columns)
 end
 
 def max_num_of_per_column(elements)
-  return 0 if elements.empty?
-
   num_of_remainder = elements.length % COLUMN_NUM
   max_num_of_per_column = elements.length / COLUMN_NUM
 
