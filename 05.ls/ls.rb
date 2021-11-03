@@ -5,7 +5,13 @@ MARGIN = 10
 
 def extract_elements
   path = Dir.getwd
-  Dir.entries(path).filter { |f| !f.start_with? '.' }
+
+  option = ARGV[0]
+  if option == '-a'
+    Dir.entries(path)
+  else
+    Dir.entries(path).filter { |f| !f.start_with? '.' }
+  end
 end
 
 def display(extracted_elements)
