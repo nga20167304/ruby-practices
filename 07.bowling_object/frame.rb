@@ -5,15 +5,21 @@ require_relative 'shot'
 class Frame
   attr_reader :first_shot, :second_shot, :third_shot
 
-  def initialize(first_mark, second_mark, third_mark = nil)
-    @first_shot = Shot.new(first_mark)
-    @second_shot = Shot.new(second_mark)
-    @third_shot = Shot.new(third_mark)
+  def initialize(frame)
+    @first_shot = Shot.new(frame[0])
+    @second_shot = frame[1] ? Shot.new(frame[1]) : Shot.new('0')
+    @third_shot = frame[2] ? Shot.new(frame[2]) : Shot.new('0')
   end
 
-  def score
-    return first_shot.score + second_shot.score + third_shot.score unless third_shot.nil?
+  def subtotal_score
+    first_shot.score + second_shot.score + third_shot.score
+  end
 
-    first_shot.score + second_shot.score
+  def strike?
+    @first_shot.score == 10
+  end
+
+  def spare?
+    !strike? && @first_shot.score + @second_shot.score == 10
   end
 end
