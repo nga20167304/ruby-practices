@@ -6,11 +6,15 @@ MARGIN = 10
 def extract_elements
   path = Dir.getwd
 
-  option = ARGV[0]
-  if option == '-a'
-    Dir.entries(path)
+  elements = Dir.entries(path).sort
+
+  case ARGV[0]
+  when '-a'
+    elements
+  when '-r'
+    elements.reverse.filter { |f| !f.start_with? '.' }
   else
-    Dir.entries(path).filter { |f| !f.start_with? '.' }
+    elements.filter { |f| !f.start_with? '.' }
   end
 end
 
@@ -55,7 +59,7 @@ def longest_element_name_length(elements)
 end
 
 def main
-  elements = extract_elements.sort
+  elements = extract_elements
   display(elements)
 end
 
