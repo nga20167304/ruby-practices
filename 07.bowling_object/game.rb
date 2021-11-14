@@ -5,8 +5,8 @@ require_relative 'frame'
 class Game
   def initialize(marks)
     @shots = marks.split(',')
-    @frames_shots = shots_into_frames
-    @frames = create_frames
+    frames_shots = shots_into_frames
+    @frames = frames_shots.map { |frame_shot| Frame.new(frame_shot) }
   end
 
   def score
@@ -46,15 +46,12 @@ class Game
     frames
   end
 
-  def create_frames
-    @frames_shots.map { |frame_shot| Frame.new(frame_shot) }
-  end
-
   def bonus_of_strike(index_of_frame)
     if index_of_frame < 8 && @frames[index_of_frame + 1].strike?
       10 + @frames[index_of_frame + 2].first_shot.score
     else
-      @frames[index_of_frame + 1].first_shot.score + @frames[index_of_frame + 1].second_shot.score
+      # @frames[index_of_frame + 1].first_shot.score + @frames[index_of_frame + 1].second_shot.score
+      [:first_shot, :second_shot].map { |attr| @frames[index_of_frame + 1].send(attr) }.map(&:score).sum
     end
   end
 
