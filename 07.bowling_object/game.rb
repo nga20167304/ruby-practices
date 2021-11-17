@@ -12,7 +12,7 @@ class Game
   def score
     score = 0
 
-    @frames.each_with_index do |frame, index_of_frame|
+    @frames.each_with_index.sum do |frame, index_of_frame|
       if index_of_frame < 9
         if frame.strike?
           score += bonus_of_strike(index_of_frame)
