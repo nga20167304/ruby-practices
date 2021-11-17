@@ -1,7 +1,30 @@
 # frozen_string_literal: true
 
+require 'date'
+require 'etc'
+
 COLUMN_NUM = 3
 MARGIN = 10
+PERMISSIONS = {
+  0 => '---',
+  1 => '--x',
+  2 => '-w-',
+  3 => '-wx',
+  4 => 'r--',
+  5 => 'r-x',
+  6 => 'rw-',
+  7 => 'rwx'
+}.freeze
+
+FTYPE = {
+  'file' => '-',
+  'directory' => 'd',
+  'characterSpecial' => 'c',
+  'blockSpecial' => 'b',
+  'fifo' => 'p',
+  'link' => 'l',
+  'socket' => 's'
+}.freeze
 
 def extract_elements
   path = Dir.getwd
@@ -58,9 +81,72 @@ def longest_element_name_length(elements)
   element_has_max_length.length
 end
 
+def blocks(file)
+  File::Stat.new(file).blocks
+end
+
+def ftype(file)
+  ftype = File::Stat.new(file).ftype
+  FTYPE[ftype]
+end
+
+def permissions(file)
+  permissions_number = File::Stat.new(file).mode.to_s(8)[-3, 3].chars.map(&:to_i)
+  permissions_number.map { |number| PERMISSIONS[number] }.join
+end
+
+def nlink(file)
+  File::Stat.new(file).nlink.to_s.rjust(3)
+end
+
+def owner(file)
+  Etc.getpwuid(File::Stat.new(file).uid).name.rjust(MARGIN)
+end
+
+def group(file)
+  Etc.getgrgid(File::Stat.new(file).gid).name.rjust(7)
+end
+
+def size(file)
+  File::Stat.new(file).size.to_s.rjust(5)
+end
+
+def time_lapse(file)
+  mtime = File::Stat.new(file).mtime
+  year = mtime.strftime('%Y')
+  if year == Date.today.year.to_s
+    mtime.strftime(' %m %e %H:%M ')
+  else
+    mtime.strftime(' %y %m %e %H:%M ')
+  end
+end
+
+def display_with_l_option(extracted_elements)
+  blocks = 0
+  line = ''
+  extracted_elements.each do |element|
+    blocks += blocks(element)
+    line += ftype(element)
+    line += permissions(element)
+    line += nlink(element)
+    line += owner(element)
+    line += group(element)
+    line += size(element)
+    line += time_lapse(element)
+    line += element.ljust(MARGIN)
+    line += "\n"
+  end
+  puts "total #{blocks}"
+  puts line
+end
+
 def main
   elements = extract_elements
-  display(elements)
+  if ARGV[0] == '-l'
+    display_with_l_option(elements)
+  else
+    display(elements)
+  end
 end
 
 main
