@@ -51,7 +51,7 @@ class Game
       10 + @frames[index_of_frame + 2].first_shot.score
     else
       # @frames[index_of_frame + 1].first_shot.score + @frames[index_of_frame + 1].second_shot.score
-      [:first_shot, :second_shot].map { |attr| @frames[index_of_frame + 1].send(attr) }.map(&:score).sum
+      %i[first_shot second_shot].map { |attr| @frames[index_of_frame + 1].send(attr) }.map(&:score).sum
     end
   end
 
