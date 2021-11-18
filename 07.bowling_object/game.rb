@@ -10,20 +10,7 @@ class Game
   end
 
   def score
-    score = 0
-
-    @frames.each_with_index.sum do |frame, index_of_frame|
-      if index_of_frame < 9
-        if frame.strike?
-          score += bonus_of_strike(index_of_frame)
-        elsif frame.spare?
-          score += bonus_of_spare(index_of_frame)
-        end
-      end
-      score += frame.subtotal_score
-    end
-
-    score
+    @frames.each_with_index.sum { |frame, index| bonus_point(index).nil? ? frame.subtotal_score : frame.subtotal_score + bonus_point(index) }
   end
 
   def shots_into_frames
@@ -57,6 +44,16 @@ class Game
 
   def bonus_of_spare(index_of_frame)
     @frames[index_of_frame + 1].first_shot.score
+  end
+
+  def bonus_point(index_of_frame)
+    return unless index_of_frame < 9
+
+    if @frames[index_of_frame].strike?
+      bonus_of_strike(index_of_frame)
+    elsif @frames[index_of_frame].spare?
+      bonus_of_spare(index_of_frame)
+    end
   end
 end
 
