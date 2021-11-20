@@ -5,6 +5,7 @@ require 'etc'
 
 COLUMN_NUM = 3
 MARGIN = 10
+MARGIN_FOR_L_OPTION = 7
 PERMISSIONS = {
   0 => '---',
   1 => '--x',
@@ -44,16 +45,20 @@ end
 def display(extracted_elements)
   return if extracted_elements.empty?
 
-  columns = split_elements_into_column(extracted_elements)
-  longest_element_name_length = longest_element_name_length(extracted_elements)
-  largest_column_elements_count = columns.max_by(&:size)
+  if ARGV[0] == '-l'
+    display_with_l_option(extracted_elements)
+  else
+    columns = split_elements_into_column(extracted_elements)
+    longest_element_name_length = longest_element_name_length(extracted_elements)
+    largest_column_elements_count = columns.max_by(&:size)
 
-  (0...largest_column_elements_count.length).each do |i|
-    tmp = ''
-    (0...columns.length).each do |j|
-      tmp += columns[j][i].to_s.ljust(longest_element_name_length + MARGIN)
+    (0...largest_column_elements_count.length).each do |i|
+      tmp = ''
+      (0...columns.length).each do |j|
+        tmp += columns[j][i].to_s.ljust(longest_element_name_length + MARGIN)
+      end
+      puts tmp
     end
-    puts tmp
   end
 end
 
@@ -96,7 +101,7 @@ def permissions(file)
 end
 
 def nlink(file)
-  File::Stat.new(file).nlink.to_s.rjust(3)
+  File::Stat.new(file).nlink.to_s.rjust(MARGIN_FOR_L_OPTION)
 end
 
 def owner(file)
@@ -104,18 +109,18 @@ def owner(file)
 end
 
 def group(file)
-  Etc.getgrgid(File::Stat.new(file).gid).name.rjust(7)
+  Etc.getgrgid(File::Stat.new(file).gid).name.rjust(MARGIN_FOR_L_OPTION)
 end
 
 def size(file)
-  File::Stat.new(file).size.to_s.rjust(5)
+  File::Stat.new(file).size.to_s.rjust(MARGIN_FOR_L_OPTION)
 end
 
 def time_lapse(file)
   mtime = File::Stat.new(file).mtime
   year = mtime.strftime('%Y')
   if year == Date.today.year.to_s
-    mtime.strftime(' %m %e %H:%M ')
+    mtime.strftime(' %b %e %H:%M ')
   else
     mtime.strftime(' %y %m %e %H:%M ')
   end
@@ -142,11 +147,7 @@ end
 
 def main
   elements = extract_elements
-  if ARGV[0] == '-l'
-    display_with_l_option(elements)
-  else
-    display(elements)
-  end
+  display(elements)
 end
 
 main
