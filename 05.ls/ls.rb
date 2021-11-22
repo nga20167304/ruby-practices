@@ -97,7 +97,7 @@ def permissions(file)
 end
 
 def nlink(file)
-  nlink = File::Stat.new(file).nlink.to_s
+  File::Stat.new(file).nlink.to_s
 end
 
 def owner(file)
@@ -111,7 +111,7 @@ def group(file)
 end
 
 def size(file)
-  size = File::Stat.new(file).size.to_s
+  File::Stat.new(file).size.to_s
 end
 
 def time_lapse(file)
