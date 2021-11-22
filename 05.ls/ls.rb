@@ -5,7 +5,7 @@ require 'etc'
 
 COLUMN_NUM = 3
 MARGIN = 10
-MARGIN_FOR_L_OPTION = 7
+MARGIN_FOR_L_OPTION = 2
 PERMISSIONS = {
   0 => '---',
   1 => '--x',
@@ -45,20 +45,16 @@ end
 def display(extracted_elements)
   return if extracted_elements.empty?
 
-  if ARGV[0] == '-l'
-    display_with_l_option(extracted_elements)
-  else
-    columns = split_elements_into_column(extracted_elements)
-    longest_element_name_length = longest_element_name_length(extracted_elements)
-    largest_column_elements_count = columns.max_by(&:size)
+  columns = split_elements_into_column(extracted_elements)
+  longest_element_name_length = longest_element_name_length(extracted_elements)
+  largest_column_elements_count = columns.max_by(&:size)
 
-    (0...largest_column_elements_count.length).each do |i|
-      tmp = ''
-      (0...columns.length).each do |j|
-        tmp += columns[j][i].to_s.ljust(longest_element_name_length + MARGIN)
-      end
-      puts tmp
+  (0...largest_column_elements_count.length).each do |i|
+    tmp = ''
+    (0...columns.length).each do |j|
+      tmp += columns[j][i].to_s.ljust(longest_element_name_length + MARGIN)
     end
+    puts tmp
   end
 end
 
@@ -101,19 +97,21 @@ def permissions(file)
 end
 
 def nlink(file)
-  File::Stat.new(file).nlink.to_s.rjust(MARGIN_FOR_L_OPTION)
+  nlink = File::Stat.new(file).nlink.to_s
 end
 
 def owner(file)
-  Etc.getpwuid(File::Stat.new(file).uid).name.rjust(MARGIN)
+  owner = Etc.getpwuid(File::Stat.new(file).uid).name
+  owner.rjust(owner.length + MARGIN_FOR_L_OPTION)
 end
 
 def group(file)
-  Etc.getgrgid(File::Stat.new(file).gid).name.rjust(MARGIN_FOR_L_OPTION)
+  group = Etc.getgrgid(File::Stat.new(file).gid).name
+  group.rjust(group.length + MARGIN_FOR_L_OPTION)
 end
 
 def size(file)
-  File::Stat.new(file).size.to_s.rjust(MARGIN_FOR_L_OPTION)
+  size = File::Stat.new(file).size.to_s
 end
 
 def time_lapse(file)
@@ -126,6 +124,22 @@ def time_lapse(file)
   end
 end
 
+def max_length_of_nlink(extracted_elements)
+  nlink_length = []
+  extracted_elements.each do |element|
+    nlink_length.push(File::Stat.new(element).nlink.to_s.length)
+  end
+  nlink_length.max
+end
+
+def max_length_of_size(extracted_elements)
+  size_length = []
+  extracted_elements.each do |element|
+    size_length.push(File::Stat.new(element).size.to_s.length)
+  end
+  size_length.max
+end
+
 def display_with_l_option(extracted_elements)
   blocks = 0
   line = ''
@@ -133,10 +147,10 @@ def display_with_l_option(extracted_elements)
     blocks += blocks(element)
     line += ftype(element)
     line += permissions(element)
-    line += nlink(element)
+    line += nlink(element).rjust(max_length_of_nlink(extracted_elements) + MARGIN_FOR_L_OPTION)
     line += owner(element)
     line += group(element)
-    line += size(element)
+    line += size(element).rjust(max_length_of_size(extracted_elements) + MARGIN_FOR_L_OPTION)
     line += time_lapse(element)
     line += element.ljust(MARGIN)
     line += "\n"
@@ -146,8 +160,11 @@ def display_with_l_option(extracted_elements)
 end
 
 def main
-  elements = extract_elements
-  display(elements)
+  if ARGV[0] == '-l'
+    display_with_l_option(extract_elements)
+  else
+    display(extract_elements)
+  end
 end
 
 main
