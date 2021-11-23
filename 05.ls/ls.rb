@@ -101,13 +101,11 @@ def nlink(file)
 end
 
 def owner(file)
-  owner = Etc.getpwuid(File::Stat.new(file).uid).name
-  owner.rjust(owner.length + MARGIN_FOR_L_OPTION)
+  Etc.getpwuid(File::Stat.new(file).uid).name
 end
 
 def group(file)
-  group = Etc.getgrgid(File::Stat.new(file).gid).name
-  group.rjust(group.length + MARGIN_FOR_L_OPTION)
+  Etc.getgrgid(File::Stat.new(file).gid).name
 end
 
 def size(file)
@@ -126,17 +124,13 @@ end
 
 def max_length_of_nlink(extracted_elements)
   nlink_length = []
-  extracted_elements.each do |element|
-    nlink_length.push(File::Stat.new(element).nlink.to_s.length)
-  end
+  extracted_elements.map { |element| nlink_length.push(File::Stat.new(element).nlink.to_s.length) }
   nlink_length.max
 end
 
 def max_length_of_size(extracted_elements)
   size_length = []
-  extracted_elements.each do |element|
-    size_length.push(File::Stat.new(element).size.to_s.length)
-  end
+  extracted_elements.map { |element| size_length.push(File::Stat.new(element).size.to_s.length) }
   size_length.max
 end
 
@@ -148,8 +142,8 @@ def display_with_l_option(extracted_elements)
     line += ftype(element)
     line += permissions(element)
     line += nlink(element).rjust(max_length_of_nlink(extracted_elements) + MARGIN_FOR_L_OPTION)
-    line += owner(element)
-    line += group(element)
+    line += owner(element).rjust(owner(element).length + MARGIN_FOR_L_OPTION)
+    line += group(element).rjust(group(element).length + MARGIN_FOR_L_OPTION)
     line += size(element).rjust(max_length_of_size(extracted_elements) + MARGIN_FOR_L_OPTION)
     line += time_lapse(element)
     line += element.ljust(MARGIN)
