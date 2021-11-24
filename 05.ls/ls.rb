@@ -97,7 +97,8 @@ def permissions(file)
 end
 
 def nlink(file)
-  File::Stat.new(file).nlink.to_s
+  nlink = File::Stat.new(file).nlink
+  nlink.to_s.rjust(max_length_of_nlink(extract_elements) + MARGIN_FOR_L_OPTION)
 end
 
 def owner(file)
@@ -109,7 +110,8 @@ def group(file)
 end
 
 def size(file)
-  File::Stat.new(file).size.to_s
+  size = File::Stat.new(file).size
+  size.to_s.rjust(max_length_of_size(extract_elements) + MARGIN_FOR_L_OPTION)
 end
 
 def time_lapse(file)
@@ -123,14 +125,12 @@ def time_lapse(file)
 end
 
 def max_length_of_nlink(extracted_elements)
-  nlink_length = []
-  extracted_elements.map { |element| nlink_length.push(File::Stat.new(element).nlink.to_s.length) }
+  nlink_length = extracted_elements.map { |element| File::Stat.new(element).nlink.to_s.length }
   nlink_length.max
 end
 
 def max_length_of_size(extracted_elements)
-  size_length = []
-  extracted_elements.map { |element| size_length.push(File::Stat.new(element).size.to_s.length) }
+  size_length = extracted_elements.map { |element| File::Stat.new(element).size.to_s.length }
   size_length.max
 end
 
@@ -141,10 +141,10 @@ def display_with_l_option(extracted_elements)
     blocks += blocks(element)
     line += ftype(element)
     line += permissions(element)
-    line += nlink(element).rjust(max_length_of_nlink(extracted_elements) + MARGIN_FOR_L_OPTION)
+    line += nlink(element)
     line += owner(element).rjust(owner(element).length + MARGIN_FOR_L_OPTION)
     line += group(element).rjust(group(element).length + MARGIN_FOR_L_OPTION)
-    line += size(element).rjust(max_length_of_size(extracted_elements) + MARGIN_FOR_L_OPTION)
+    line += size(element)
     line += time_lapse(element)
     line += element.ljust(MARGIN)
     line += "\n"
