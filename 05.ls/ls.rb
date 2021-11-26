@@ -102,11 +102,13 @@ def nlink(file)
 end
 
 def owner(file)
-  Etc.getpwuid(File::Stat.new(file).uid).name
+  owner = Etc.getpwuid(File::Stat.new(file).uid).name
+  owner.rjust(owner.length + MARGIN_FOR_L_OPTION)
 end
 
 def group(file)
-  Etc.getgrgid(File::Stat.new(file).gid).name
+  group = Etc.getgrgid(File::Stat.new(file).gid).name
+  group.rjust(group.length + MARGIN_FOR_L_OPTION)
 end
 
 def size(file)
@@ -142,8 +144,8 @@ def display_with_l_option(extracted_elements)
     line += ftype(element)
     line += permissions(element)
     line += nlink(element)
-    line += owner(element).rjust(owner(element).length + MARGIN_FOR_L_OPTION)
-    line += group(element).rjust(group(element).length + MARGIN_FOR_L_OPTION)
+    line += owner(element)
+    line += group(element)
     line += size(element)
     line += time_lapse(element)
     line += element.ljust(MARGIN)
