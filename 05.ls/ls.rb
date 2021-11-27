@@ -6,6 +6,8 @@ require 'etc'
 COLUMN_NUM = 3
 MARGIN = 10
 MARGIN_FOR_L_OPTION = 2
+PATH = Dir.getwd
+ELEMENTS = Dir.entries(PATH).sort
 PERMISSIONS = {
   0 => '---',
   1 => '--x',
@@ -28,18 +30,30 @@ FTYPE = {
 }.freeze
 
 def extract_elements
-  path = Dir.getwd
-
-  elements = Dir.entries(path).sort
-
   case ARGV[0]
   when '-a'
-    elements
+    ELEMENTS
   when '-r'
-    elements.reverse.filter { |f| !f.start_with? '.' }
+    ELEMENTS.reverse.filter { |f| !f.start_with? '.' }
   else
-    elements.filter { |f| !f.start_with? '.' }
+    ELEMENTS.filter { |f| !f.start_with? '.' }
   end
+end
+
+def extract_elements_with_multi_options
+  return 0 if ARGV[0].nil?
+
+  options = ARGV[0].delete('-').split(//)
+
+  options.each do |option|
+    case option
+    when 'a'
+      ELEMENTS
+    when 'r'
+      ELEMENTS.reverse!
+    end
+  end
+  ELEMENTS
 end
 
 def display(extracted_elements)
@@ -136,6 +150,14 @@ def max_length_of_size(extracted_elements)
   size_length.max
 end
 
+def ds_store_file(extracted_elements)
+  if extracted_elements == '.DS_Store'
+    '@'
+  else
+    ' '
+  end
+end
+
 def display_with_l_option(extracted_elements)
   blocks = 0
   line = ''
@@ -143,6 +165,7 @@ def display_with_l_option(extracted_elements)
     blocks += blocks(element)
     line += ftype(element)
     line += permissions(element)
+    line += ds_store_file(element)
     line += nlink(element)
     line += owner(element)
     line += group(element)
@@ -158,8 +181,12 @@ end
 def main
   if ARGV[0] == '-l'
     display_with_l_option(extract_elements)
-  else
+  elsif ARGV[0].nil? || ARGV[0].size == 2
     display(extract_elements)
+  elsif ARGV[0].include?('l')
+    display_with_l_option(extract_elements_with_multi_options)
+  else
+    display(extract_elements_with_multi_options)
   end
 end
 
