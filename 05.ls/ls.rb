@@ -42,6 +42,7 @@ end
 
 def extract_elements_with_multi_options
   return 0 if ARGV[0].nil?
+  return ELEMENTS.reverse.filter { |f| !f.start_with? '.' } if ARGV[0].include?('r') && !ARGV[0].include?('a')
 
   options = ARGV[0].delete('-').split(//)
 
