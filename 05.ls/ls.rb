@@ -2,12 +2,11 @@
 
 require 'date'
 require 'etc'
+require 'optparse'
 
 COLUMN_NUM = 3
 MARGIN = 10
 MARGIN_FOR_L_OPTION = 2
-PATH = Dir.getwd
-ELEMENTS = Dir.entries(PATH).sort
 PERMISSIONS = {
   0 => '---',
   1 => '--x',
@@ -29,32 +28,28 @@ FTYPE = {
   'socket' => 's'
 }.freeze
 
-def extract_elements
-  case ARGV[0]
-  when '-a'
-    ELEMENTS
-  when '-r'
-    ELEMENTS.reverse.filter { |f| !f.start_with? '.' }
-  else
-    ELEMENTS.filter { |f| !f.start_with? '.' }
-  end
+def handle_options
+  opt = OptionParser.new
+  opt.on('-a') { |v| v }
+  opt.on('-l') { |v| v }
+  opt.on('-r') { |v| v }
+  options = {}
+  opt.parse!(ARGV, into: options)
+  options
 end
 
-def extract_elements_with_multi_options
-  return 0 if ARGV[0].nil?
-  return ELEMENTS.reverse.filter { |f| !f.start_with? '.' } if ARGV[0].include?('r') && !ARGV[0].include?('a')
+OPTIONS = handle_options
 
-  options = ARGV[0].delete('-').split(//)
+def extract_elements
+  path = Dir.getwd
 
-  options.each do |option|
-    case option
-    when 'a'
-      ELEMENTS
-    when 'r'
-      ELEMENTS.reverse!
-    end
-  end
-  ELEMENTS
+  elements = Dir.entries(path).sort
+
+  return elements.reverse!.filter { |f| !f.start_with? '.' } if OPTIONS[:r] && !OPTIONS[:a]
+  return elements.reverse! if OPTIONS[:r]
+  return elements if OPTIONS[:a]
+
+  elements.filter { |f| !f.start_with? '.' }
 end
 
 def display(extracted_elements)
@@ -180,14 +175,10 @@ def display_with_l_option(extracted_elements)
 end
 
 def main
-  if ARGV[0] == '-l'
+  if OPTIONS[:l]
     display_with_l_option(extract_elements)
-  elsif ARGV[0].nil? || ARGV[0].size == 2
-    display(extract_elements)
-  elsif ARGV[0].include?('l')
-    display_with_l_option(extract_elements_with_multi_options)
   else
-    display(extract_elements_with_multi_options)
+    display(extract_elements)
   end
 end
 
