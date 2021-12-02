@@ -28,26 +28,16 @@ FTYPE = {
   'socket' => 's'
 }.freeze
 
-def handle_options
-  opt = OptionParser.new
-  opt.on('-a') { |v| v }
-  opt.on('-l') { |v| v }
-  opt.on('-r') { |v| v }
-  options = {}
-  opt.parse!(ARGV, into: options)
-  options
-end
-
-OPTIONS = handle_options
+OPTIONS = ARGV.getopts('a', 'l', 'r')
 
 def extract_elements
   path = Dir.getwd
 
   elements = Dir.entries(path).sort
 
-  return elements.reverse!.filter { |f| !f.start_with? '.' } if OPTIONS[:r] && !OPTIONS[:a]
-  return elements.reverse! if OPTIONS[:r]
-  return elements if OPTIONS[:a]
+  return elements.reverse!.filter { |f| !f.start_with? '.' } if OPTIONS['r'] && !OPTIONS['a']
+  return elements.reverse! if OPTIONS['r']
+  return elements if OPTIONS['a']
 
   elements.filter { |f| !f.start_with? '.' }
 end
@@ -175,7 +165,7 @@ def display_with_l_option(extracted_elements)
 end
 
 def main
-  if OPTIONS[:l]
+  if OPTIONS['l']
     display_with_l_option(extract_elements)
   else
     display(extract_elements)
