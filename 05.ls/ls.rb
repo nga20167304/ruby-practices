@@ -35,11 +35,9 @@ def extract_elements
 
   elements = Dir.entries(path).sort
 
-  return elements.reverse!.filter { |f| !f.start_with? '.' } if OPTIONS['r'] && !OPTIONS['a']
-  return elements.reverse! if OPTIONS['r']
-  return elements if OPTIONS['a']
-
-  elements.filter { |f| !f.start_with? '.' }
+  elements = elements.filter { |f| !f.start_with? '.' } if !OPTIONS['a']
+  elements = elements.reverse if OPTIONS['r']
+  elements
 end
 
 def display(extracted_elements)
@@ -136,8 +134,8 @@ def max_length_of_size(extracted_elements)
   size_length.max
 end
 
-def ds_store_file(extracted_elements)
-  if extracted_elements == '.DS_Store'
+def ds_store_file(extracted_element)
+  if extracted_element == '.DS_Store'
     '@'
   else
     ' '
