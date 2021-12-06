@@ -2,6 +2,7 @@
 
 require 'date'
 require 'etc'
+require 'optparse'
 
 COLUMN_NUM = 3
 MARGIN = 10
@@ -27,19 +28,16 @@ FTYPE = {
   'socket' => 's'
 }.freeze
 
+OPTIONS = ARGV.getopts('a', 'l', 'r')
+
 def extract_elements
   path = Dir.getwd
 
   elements = Dir.entries(path).sort
 
-  case ARGV[0]
-  when '-a'
-    elements
-  when '-r'
-    elements.reverse.filter { |f| !f.start_with? '.' }
-  else
-    elements.filter { |f| !f.start_with? '.' }
-  end
+  elements = elements.filter { |f| !f.start_with? '.' } if !OPTIONS['a']
+  elements = elements.reverse if OPTIONS['r']
+  elements
 end
 
 def display(extracted_elements)
@@ -136,6 +134,14 @@ def max_length_of_size(extracted_elements)
   size_length.max
 end
 
+def ds_store_file(extracted_element)
+  if extracted_element == '.DS_Store'
+    '@'
+  else
+    ' '
+  end
+end
+
 def display_with_l_option(extracted_elements)
   blocks = 0
   line = ''
@@ -143,6 +149,7 @@ def display_with_l_option(extracted_elements)
     blocks += blocks(element)
     line += ftype(element)
     line += permissions(element)
+    line += ds_store_file(element)
     line += nlink(element)
     line += owner(element)
     line += group(element)
@@ -156,7 +163,7 @@ def display_with_l_option(extracted_elements)
 end
 
 def main
-  if ARGV[0] == '-l'
+  if OPTIONS['l']
     display_with_l_option(extract_elements)
   else
     display(extract_elements)
