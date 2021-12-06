@@ -35,7 +35,7 @@ def extract_elements
 
   elements = Dir.entries(path).sort
 
-  elements = elements.filter { |f| !f.start_with? '.' } if !OPTIONS['a']
+  elements = elements.filter { |f| !f.start_with? '.' } unless OPTIONS['a']
   elements = elements.reverse if OPTIONS['r']
   elements
 end
