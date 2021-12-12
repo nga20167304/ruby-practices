@@ -4,6 +4,7 @@ require 'optparse'
 
 OPTIONS = ARGV.getopts('l')
 MARGIN = 8
+INIT_TOTAL = Array.new(OPTIONS['l'] ? 1 : 3).fill(0)
 
 def count_line_word_size(file)
   line = file.lines.count
@@ -23,7 +24,12 @@ def main
   if ARGV.empty?
     print_wc(count_line_word_size($stdin.read))
   else
-    print_wc(count_line_word_size(File.read(ARGV[0])), ARGV[0])
+    counters = ARGV.map { |file_name| count_line_word_size(File.read(file_name)) }
+    total = counters.each_with_index.reduce(INIT_TOTAL) do |accumulator, (count, i)|
+      print_wc(count, ARGV[i])
+      accumulator.each.with_index.map { |sum, j| sum + count[j] }
+    end
+    print_wc(total, 'total') if counters.size > 1
   end
 end
 
