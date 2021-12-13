@@ -9,7 +9,7 @@ INIT_TOTAL = Array.new(OPTIONS['l'] ? 1 : 3).fill(0)
 def count_line_word_size(file)
   line = file.lines.count
   word = file.split.size
-  bytesize = file.bytesize
+  size = file.size
 
   return [line] if OPTIONS['l']
 
@@ -25,11 +25,13 @@ def main
     print_wc(count_line_word_size($stdin.read))
   else
     counters = ARGV.map { |file_name| count_line_word_size(File.read(file_name)) }
-    total = counters.each_with_index.reduce(INIT_TOTAL) do |accumulator, (count, i)|
-      print_wc(count, ARGV[i])
-      accumulator.each.with_index.map { |sum, j| sum + count[j] }
+    if counters.size > 1
+      total = counters.each_with_index.reduce(INIT_TOTAL) do |accumulator, (count, i)|
+        print_wc(count, ARGV[i])
+        accumulator.each.with_index.map { |sum, j| sum + count[j] }
+      end
+      print_wc(total, 'total')
     end
-    print_wc(total, 'total') if counters.size > 1
   end
 end
 
