@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-class Option
-  require 'optparse'
+require 'optparse'
 
+class Option
   def initialize
     @options = ARGV.getopts('a', 'l', 'r')
   end

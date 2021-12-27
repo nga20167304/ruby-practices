@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-class Element
-  require 'date'
-  require 'etc'
+require 'date'
+require 'etc'
 
+class Element
   PERMISSIONS = {
     0 => '---',
     1 => '--x',
@@ -37,8 +37,7 @@ class Element
   end
 
   def ftype
-    ftype = @stat.ftype
-    FTYPE[ftype]
+    FTYPE[@stat.ftype]
   end
 
   def permissions
@@ -73,10 +72,6 @@ class Element
   end
 
   def ds_store_file
-    if @file_name == '.DS_Store'
-      '@'
-    else
-      ' '
-    end
+    @file_name == '.DS_Store' ? '@' : ' '
   end
 end
